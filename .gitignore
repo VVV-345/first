@@ -1,0 +1,43 @@
+# ==========================================
+# 🌸 数字人格陪伴系统 - Git 忽略规则
+# ==========================================
+
+# 1. 核心隐私与敏感配置（绝对不能上传！）
+.env
+*.env
+ingestion_trace.log
+
+# 2. 本地数据库与离线缓存（文件极大且含个人聊天隐私）
+qdrant_db/
+qdrant_db/*
+input/processed_registry.json
+input/global_persona_config.json
+
+# 3. Python 运行环境与编译缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 4. 操作系统与编辑器缓存
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# 5. 测试数据与日志
+tests/__pycache__/
+logs/
+*.log
