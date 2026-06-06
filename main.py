@@ -17,12 +17,20 @@ def main():
     logger.info("=" * 40)
 
     # 1. 后台数据灌注 (Agent 版本)
-    try:
-        file_handler = FileCallbackHandler("ingestion_trace.log")
-        pipeline = AgentIngestionPipeline(data_directory=DATA_DIR, callbacks=[file_handler])
-        pipeline.run("帮我看看 data/ 目录下有没有新数据需要清洗并洗入数据库。")
-    except Exception:
-        logger.error("灌注流水线失败，继续启动 UI", exc_info=True)
+    # 仅在本地有 Ollama 且 data/ 目录含历史聊天文件时运行
+    # HuggingFace Spaces 上无本地 LLM 也无历史文件，自动跳过
+    import glob
+    txt_files = glob.glob(os.path.join(DATA_DIR, "*.txt"))
+    if txt_files:
+        logger.info("检测到 %d 个待处理聊天记录，启动数据灌注流水线", len(txt_files))
+        try:
+            file_handler = FileCallbackHandler("ingestion_trace.log")
+            pipeline = AgentIngestionPipeline(data_directory=DATA_DIR, callbacks=[file_handler])
+            pipeline.run("帮我看看 data/ 目录下有没有新数据需要清洗并洗入数据库。")
+        except Exception:
+            logger.warning("灌注流水线失败（可能缺少本地 LLM/Ollama），跳过", exc_info=True)
+    else:
+        logger.info("数据目录无待处理文件，跳过离线灌注（在线对话仍会自动记忆入库）")
 
     # 2. 启动前端 UI (Gradio)
     project_root = os.path.dirname(os.path.abspath(__file__))
