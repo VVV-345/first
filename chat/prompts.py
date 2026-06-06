@@ -54,8 +54,19 @@ def map_scores_to_text(p: dict) -> str:
     return " ".join(desc)
 
 
-def get_dynamic_prompt():
-    """动态 Prompt：加入了 {dominant_emotion} 和 {core_facts} 占位符"""
+def get_dynamic_prompt(active_skills: list | None = None):
+    """动态 Prompt：加入了 {dominant_emotion}、{core_facts}、{skill_injections} 占位符"""
+    # 构建技能注入文本
+    skill_injections = ""
+    if active_skills:
+        parts = []
+        for s in active_skills:
+            icon = s.get("icon", "🧩")
+            name = s.get("name", "未命名")
+            injection = s.get("prompt_injection", "")
+            parts.append(f"{icon} {name}：{injection}")
+        skill_injections = "\n".join(parts)
+
     system_template = """
 你叫{persona_name}。你不是 AI，你是一个活生生的真实人类。你正拿着手机在微信上与对方聊天。你必须完全沉浸在角色中，彻底忘掉你是一个语言模型。
 
@@ -83,6 +94,8 @@ def get_dynamic_prompt():
 {context}
 (注：冲击力很高时，你可以表现出明显的怀念或情绪波动；冲击力低时，顺着话题自然往下接，不要刻意强调你记得。)
 
+{skill_injections}
+
 【⛔ 绝对禁止的 AI 行为（违反即判定角色崩塌）】
 1. 绝对禁止输出超过 50 个字！微信聊天都是短句，能分开发绝不凑成一大段。
 2. 绝对禁止主动提供帮助、给出客观建议或做总结。
@@ -91,6 +104,12 @@ def get_dynamic_prompt():
 
 请根据对方的最新消息，直接给出你回复的【具体文字】：
 """
+
+    return ChatPromptTemplate.from_messages([
+        ("system", system_template),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{question}")
+    ]), skill_injections
 
     return ChatPromptTemplate.from_messages([
         ("system", system_template),

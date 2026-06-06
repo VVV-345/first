@@ -23,12 +23,11 @@ sentence-transformers==5.3.0
 openai==1.109.1
 
 # --- Web UI ---
-streamlit==1.57.0
+gradio>=4.0
 
 # --- 基础 ---
 pydantic==2.13.4
 jieba>=0.42
-nest-asyncio>=1.5
 python-dotenv==1.2.2
 
 # ==========================================

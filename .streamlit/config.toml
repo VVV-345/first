@@ -1,0 +1,7 @@
+# .streamlit/config.toml
+[server]
+# 显式禁止 Streamlit 监控数据文件夹和本地数据库，防止落盘时误触发全页刷新
+folderWatchBlacklist = ["data", "qdrant_db", "logs"]
+
+# 或者在开发阶段，直接简单粗暴地彻底关闭源码监视器：
+# fileWatcherType = "none"

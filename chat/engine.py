@@ -29,6 +29,15 @@ class PersonaEngine:
             temperature=0.7
         )
         self.chat_history = []
+        self.active_skills: list[dict] = []
+
+    def set_skills(self, skills: list[dict]):
+        """激活技能列表（替换全部）"""
+        self.active_skills = skills or []
+
+    def clear_skills(self):
+        """清空所有激活的技能"""
+        self.active_skills = []
 
     def _parse_retrieved_docs(self, docs):
         """从检索到的文档中提取：上下文文本、核心事实、主导情绪、最大冲击力"""
@@ -63,14 +72,18 @@ class PersonaEngine:
         return context_str, core_facts_str, dominant_emotion
 
     async def stream_chat(self, query: str):
-        # 1. 检索向量库（异步调用）
-        docs = await self.retriever.ainvoke(query)
+        # 1. 检索向量库（异步调用，加保护防止检索崩溃导致整条链路断裂）
+        try:
+            docs = await self.retriever.ainvoke(query)
+        except Exception:
+            logger.error("混合检索调用失败", exc_info=True)
+            docs = []
 
         # 2. 动态元数据解析
         context_str, core_facts_str, dominant_emotion = self._parse_retrieved_docs(docs)
 
-        # 3. 构造 Chain
-        prompt = get_dynamic_prompt()
+        # 3. 构造 Chain（注入激活的技能）
+        prompt, skill_injections = get_dynamic_prompt(self.active_skills)
         chain = prompt | self.llm | StrOutputParser()
 
         history = self.chat_history[-20:]
@@ -88,6 +101,7 @@ class PersonaEngine:
                 "persona_name": CHAT_NAME,
                 "nickname_rules": self.persona.get("nickname_rules", DEFAULT_NICKNAME),
                 "current_relationship_status": self.persona.get("relationship_status", DEFAULT_RELATIONSHIP),
+                "skill_injections": skill_injections,
             }):
                 full_response += chunk
                 yield chunk, docs

@@ -24,14 +24,15 @@ def main():
     except Exception:
         logger.error("灌注流水线失败，继续启动 UI", exc_info=True)
 
-    # 2. 启动前端 UI
-    ui_path = os.path.join("ui", "app.py")
+    # 2. 启动前端 UI (Gradio)
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    ui_path = os.path.join(project_root, "ui", "gradio_app.py")
 
     try:
-        logger.info("正在启动网页 UI...")
-        process = subprocess.Popen([sys.executable, "-m", "streamlit", "run", ui_path])
+        logger.info("正在启动 Gradio 网页 UI...")
+        process = subprocess.Popen([sys.executable, ui_path], cwd=project_root)
     except FileNotFoundError:
-        logger.error("未安装 streamlit，请先执行 pip install streamlit")
+        logger.error("未安装 gradio，请先执行 pip install gradio")
         sys.exit(1)
 
     try:
