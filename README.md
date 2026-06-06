@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🎭 数字人格 — AI 陪伴系统
 
 一个随时间进化的 AI 对话陪伴系统。每一次对话都会被 LLM 分析性格特征、存入向量记忆库，再用大五人格 EMA 算法增量更新 AI 的"灵魂画像"。下次聊天时，系统会自动检索相关回忆、带入最新人格状态，让 AI 越来越"像人"。
@@ -161,18 +160,3 @@ python app.py
 ## 技术栈
 
 `Python` · `LangChain` · `Qdrant` · `Gradio` · `OpenAI API` · `Jieba` · `Sentence-Transformers` · `Pydantic`
-=======
----
-title: Digital Persona
-emoji: 🚀
-colorFrom: blue
-colorTo: purple
-sdk: gradio
-sdk_version: 6.16.0
-python_version: '3.13'
-app_file: app.py
-pinned: false
----
-
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
->>>>>>> 3a2b82f537c9c7a5e57f0622d6248f120654ef12
