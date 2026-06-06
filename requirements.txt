@@ -1,0 +1,42 @@
+# ==========================================
+# 数字人格陪伴系统 — 核心依赖
+# 安装: pip install -r requirements.txt
+# 注: 当前 langchain-qdrant 元数据要求 langchain-core>=1.0，
+#     但实测 0.2.43 完全兼容，以下版本均为已验证的可用组合
+# ==========================================
+
+# --- LangChain 生态 ---
+langchain==0.2.10
+langchain-core>=0.2.43,<0.3
+langchain-openai==0.1.17
+langchain-qdrant==1.1.0
+langchain-community==0.2.10
+# langchain-huggingface  # 需要 langchain-core>=0.3，当前 0.2.43 不兼容，用 langchain_community 替代
+
+# --- 向量库 ---
+qdrant-client==1.18.0
+
+# --- 嵌入模型 ---
+sentence-transformers==5.3.0
+
+# --- LLM ---
+openai==1.109.1
+
+# --- Web UI ---
+streamlit==1.57.0
+
+# --- 基础 ---
+pydantic==2.13.4
+jieba>=0.42
+nest-asyncio>=1.5
+python-dotenv==1.2.2
+
+# ==========================================
+# 测试与评估
+# ==========================================
+datasets>=3.0,<4.0    # HuggingFace datasets (召回率测试)
+
+# ==========================================
+# 可选依赖（本地 Agent 调度用）
+# ==========================================
+# ollama          # 本地运行 Qwen 2.5 7B，按需安装
